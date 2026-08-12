@@ -34,5 +34,27 @@ subprojects {
                 from(components["java"])
             }
         }
+
+        repositories {
+            maven {
+                name = "deepsite"
+                url = uri(
+                    if (version.toString().endsWith("SNAPSHOT"))
+                        "https://maven.deepsite.gg/snapshots"
+                    else
+                        "https://maven.deepsite.gg/releases"
+                )
+                credentials {
+                    username = System.getenv("DEEPSITE_MAVEN_NAME")
+                        ?: project.findProperty("deepsiteUsername") as String?
+                    password = System.getenv("DEEPSITE_MAVEN_SECRET")
+                        ?: project.findProperty("deepsitePassword") as String?
+                }
+                // Reposilite expects preemptive basic auth
+                authentication {
+                    create<BasicAuthentication>("basic")
+                }
+            }
+        }
     }
 }
